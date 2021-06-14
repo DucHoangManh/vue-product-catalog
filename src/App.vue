@@ -1,6 +1,16 @@
 <template>
   <div>
     <div d-flex mr-5>
+      <select
+        class="form-select"
+        aria-label="Default select example"
+        @change="onOptionChange"
+      >
+        <option selected>Sort by</option>
+        <option value="1">Price</option>
+        <option value="2">Name (A-Z)</option>
+        <option value="3">Name (Z-A)</option>
+      </select>
       <h3>Product: {{ productNumber }}</h3>
       <h3>Product On Sale: {{ productOnSale }}</h3>
       <h3>Total Price: {{ totalPrice }}</h3>
@@ -13,9 +23,6 @@
         aria-describedby="basic-addon1"
         @keyup="onSearchChange"
       />
-      <a href="#" class="btn btn-primary mx-auto mb-5 " @click="sortByPrice"
-        >Sort by price</a
-      >
     </div>
     <div class="container row mx-auto ">
       <product
@@ -51,8 +58,7 @@ export default {
           name: 'Oil lamp',
           price: 10,
           sale_price: null,
-          image:
-            'https://lh3.googleusercontent.com/proxy/Clr8XWbr3EUJNTvmLFeEoRVxpVqtb0Z68tEBUXah6kv2S_kAHTRKHzxP4vj6ibq7fxdrH-t_kKEdeXrR98RCTgPrkyHpRVoA1zaJJMyKb_Yjp82ef3y-NuY5GQw',
+          image: 'https://plclagi.com/wp-content/uploads/2020/11/00-8.jpg',
         },
         {
           id: 3,
@@ -120,11 +126,32 @@ export default {
         return p1.price - p2.price
       })
     },
+    sortByName() {
+      this.productList.sort((p1, p2) => {
+        return p1.name.localeCompare(p2.name)
+      })
+    },
+    sortByNameReverse() {
+      this.productList
+        .sort((p1, p2) => {
+          return p1.name.localeCompare(p2.name)
+        })
+        .reverse()
+    },
     onSearchChange(e) {
-      let re = new RegExp(e.target.value)
+      let re = new RegExp(e.target.value, 'i')
       this.productList = this.productListOrigin.filter((p) => {
         return p.name.match(re)
       })
+    },
+    onOptionChange(e) {
+      if (e.target.value === '1') {
+        this.sortByPrice()
+      } else if (e.target.value === '2') {
+        this.sortByName()
+      } else if (e.target.value === '3') {
+        this.sortByNameReverse()
+      }
     },
   },
 }

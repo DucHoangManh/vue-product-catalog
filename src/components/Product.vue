@@ -34,7 +34,6 @@ export default {
 </script>
 <style scoped>
 .p-image {
-  height: 300px;
-  width: 100%;
+  max-width: 100%;
 }
 </style>
