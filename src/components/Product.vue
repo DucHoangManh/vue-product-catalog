@@ -11,13 +11,13 @@
       <h5 class="card-title mx-auto">{{ item.name }}</h5>
       <div class="d-flex flex-row justify-content-around">
         <p v-if="!item.sale_price" class="card-text mx-auto">
-          {{ item.price }}$
+          {{ displayPrice }}
         </p>
         <p v-if="item.sale_price" class="card-text mx-auto mr-5">
-          <del> {{ item.price }}$ </del>
+          <del> {{ displayPrice }} </del>
         </p>
         <p v-if="item.sale_price" class="card-text mx-auto">
-          , sale price: {{ item.sale_price }}$
+          , sale price: {{ displaySalePrice }}
         </p>
       </div>
       <a href="#" class="btn btn-primary mx-auto">Add to cart</a>
@@ -29,6 +29,25 @@ export default {
   name: 'Product',
   props: {
     item: Object,
+  },
+  computed: {
+    displayPrice() {
+      return this.formatPrice(this.item.price)
+    },
+    displaySalePrice() {
+      return this.formatPrice(this.item.sale_price)
+    },
+  },
+  methods: {
+    formatPrice(num) {
+      const formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })
+      return formatter.format(num)
+    },
   },
 }
 </script>

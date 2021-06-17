@@ -1,28 +1,31 @@
 <template>
   <div>
-    <div d-flex mr-5>
-      <select
-        class="form-select"
-        aria-label="Default select example"
-        @change="onOptionChange"
-      >
-        <option selected>Sort by</option>
-        <option value="1">Price</option>
-        <option value="2">Name (A-Z)</option>
-        <option value="3">Name (Z-A)</option>
-      </select>
-      <h3>Product: {{ productNumber }}</h3>
-      <h3>Product On Sale: {{ productOnSale }}</h3>
-      <h3>Total Price: {{ totalPrice }}</h3>
-      <h3>Average Price: {{ avgPrice }}</h3>
-      <input
-        type="text"
-        class="form-control mr-5 ml-5"
-        placeholder="Search product..."
-        aria-label="Search field"
-        aria-describedby="basic-addon1"
-        @keyup="onSearchChange"
-      />
+    <div class="d-flex align-items-center flex-column ml-5 mb-5">
+      <h4>Product: {{ productNumber }}</h4>
+      <h4>Product On Sale: {{ productOnSale }}</h4>
+      <h4>Total Price: {{ totalPrice }}</h4>
+      <h4>Average Price: {{ avgPrice }}</h4>
+      <div class="d-flex justify-content-around">
+        <select
+          class="form-control"
+          aria-label="Default select example"
+          @change="onOptionChange"
+        >
+          <option selected>Sort by</option>
+          <option value="1">Price (Lowest first)</option>
+          <option value="2">Price (Highest first)</option>
+          <option value="3">Name (A-Z)</option>
+          <option value="4">Name (Z-A)</option>
+        </select>
+        <input
+          type="text"
+          class="form-control ml-1"
+          placeholder="Search product..."
+          aria-label="Search field"
+          aria-describedby="basic-addon1"
+          @keyup="onSearchChange"
+        />
+      </div>
     </div>
     <div class="container row mx-auto ">
       <product
@@ -108,12 +111,14 @@ export default {
       }).length
     },
     totalPrice: function() {
-      return this.productList.reduce((sum, p2) => {
-        return sum + p2.price
-      }, 0)
+      return this.formatPrice(
+        this.productList.reduce((sum, p2) => {
+          return sum + p2.price
+        }, 0)
+      )
     },
     avgPrice: function() {
-      return (
+      return this.formatPrice(
         this.productList.reduce((sum, p2) => {
           return sum + p2.price
         }, 0) / this.productList.length
@@ -121,9 +126,14 @@ export default {
     },
   },
   methods: {
-    sortByPrice() {
+    sortByPriceLowest() {
       this.productList.sort((p1, p2) => {
         return p1.price - p2.price
+      })
+    },
+    sortByPriceHighest() {
+      this.productList.sort((p1, p2) => {
+        return p2.price - p1.price
       })
     },
     sortByName() {
@@ -144,12 +154,23 @@ export default {
         return p.name.match(re)
       })
     },
+    formatPrice(num) {
+      const formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })
+      return formatter.format(num)
+    },
     onOptionChange(e) {
       if (e.target.value === '1') {
-        this.sortByPrice()
+        this.sortByPriceLowest()
       } else if (e.target.value === '2') {
-        this.sortByName()
+        this.sortByPriceHighest()
       } else if (e.target.value === '3') {
+        this.sortByName()
+      } else if (e.target.value === '4') {
         this.sortByNameReverse()
       }
     },
@@ -164,6 +185,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 2%;
 }
 </style>
